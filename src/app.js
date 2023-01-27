@@ -83,7 +83,7 @@ export const createApp = async (host) => {
         if (req.headers.referer && req.headers.referer.endsWith('/review')) {
             if (isAuthorized(req) !== true) {
                 req.visitor.event('/review/*', 'GET 401 Unauthorized', 'api').send()
-                return next(new garfError('no cats allowed :P', 401))
+                return next(new garfError('no garf haters allowed :P', 401))
             }
             express.static(garfFolderName.new)(req, res, next)
         } else {
@@ -92,13 +92,13 @@ export const createApp = async (host) => {
     })
 
     app.get('/garf', (req, res) => {
-        req.visitor.event('woof', 'GET', 'api').send()
+        req.visitor.event('garf', 'GET', 'api').send()
         setCORSHeaders(res)
         res.status(200).send(getgarfsMaybeWithFilter(req).random())
     })
 
     app.get('/garf.json', async (req, res) => {
-        req.visitor.event('woof.json', 'GET', 'api').send()
+        req.visitor.event('garf.json', 'GET', 'api').send()
         setCORSHeaders(res)
         const garfName = getgarfsMaybeWithFilter(req).random()
         const fileSizeBytes = await getGarfFileSize(garfName)
@@ -109,7 +109,7 @@ export const createApp = async (host) => {
     })
 
     app.get('/garfields', async (req, res) => {
-        req.visitor.event('Garfss', 'GET', 'api').send()
+        req.visitor.event('garfeilds', 'GET', 'api').send()
         setCORSHeaders(res)
         res.status(200).json(getgarfsMaybeWithFilter(req))
     })
