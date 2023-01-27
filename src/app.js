@@ -14,7 +14,7 @@ import {getGoodGarfs} from './fs-layer'
 import {getGarfFileSize} from './fs-layer'
 
 import {garfError} from './garf-error'
-import {garfCache} from './garfCache'
+import {GarfCache} from './garfCache'
 
 let immortalGarfs = 0
 
@@ -27,7 +27,9 @@ updateGarfsCount()
 //const jsonParser = bodyParser.json()
 
 export const createApp = async (host) => {
-    let cache = new garfCache(new List(await getGoodGarfs()))
+    //let cache = new GarfCache(new List(await getGoodGarfs()))
+
+    let cache = new GarfCache(new List(await getGoodGarfs()))
 
     setInterval(() => {
         updateCache()
@@ -36,7 +38,7 @@ export const createApp = async (host) => {
     async function updateCache() {
         try {
             const goodgarfs = await getGoodGarfs()
-            cache = new garfCache(new List(goodgarfs))
+            cache = new GarfCache(new List(goodgarfs))
             updateGarfsCount()
         } catch (error) {
             console.error(error.stack)
