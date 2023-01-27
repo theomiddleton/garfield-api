@@ -12,7 +12,8 @@
 - `npm start`
 - <http://localhost:8080/>
 
-## Tests
+## Tests 
+i dont know why you'd even bother testing this shit but like... 
 
 - `npm test`
 - `npm tdd`

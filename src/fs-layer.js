@@ -18,7 +18,7 @@ export function getGarfsCount() {
 }
 
 export const getNewGarfs = () => fs.readdir(garfFolderName.new + '/')
-export const getGoodgarfs = () => fs.readdir(garfFolderName.approved + '/')
+export const getGoodGarfs = () => fs.readdir(garfFolderName.approved + '/')
 
 export async function rejectGarf(garfName) {
     const rejectGarfPath = `./${garfFolderName.new}/${garfName}`

@@ -10,7 +10,7 @@ describe('randomgarf', () => {
     let sandbox
     beforeEach(() => {
         sandbox = sinon.sandbox.create()
-        sandbox.stub(fsLayer, 'getGoodgarfs').resolves(['testGarf.jpg'])
+        sandbox.stub(fsLayer, 'getGoodGarfs').resolves(['testGarf.jpg'])
         sandbox.stub(fsLayer, 'adoptGarf')
         sandbox.stub(fsLayer, 'getGarfFileSize')
         sandbox.stub(hashUtil, 'checkHash').callsFake(key => key === 'goodKey')
@@ -21,7 +21,7 @@ describe('randomgarf', () => {
     describe('get /garf', () => {
         it('should be garf', async () => {
             // @ts-ignore
-            fsLayer.getGoodgarfs.resolves(['testGarf.jpg'])
+            fsLayer.getGoodGarfs.resolves(['testGarf.jpg'])
             return request(await createApp('test_host'))
                 .get('/garf')
                 .expect('Content-Type', /text\/html/)
@@ -32,7 +32,7 @@ describe('randomgarf', () => {
         })
         it('should not return jpeg garfs when filter is jpg', async () => {
             // @ts-ignore
-            fsLayer.getGoodgarfs.resolves(['testGarf.JPG', 'garf.png', 'testGarf.jpg'])
+            fsLayer.getGoodGarfs.resolves(['testGarf.JPG', 'garf.png', 'testGarf.jpg'])
             return request(await createApp('test_host'))
                 .get('/garf?filter=jpg')
                 .expect('Content-Type', /text\/html/)
@@ -43,7 +43,7 @@ describe('randomgarf', () => {
         })
         it('should only return jpeg garfs when include is jpg', async () => {
             // @ts-ignore
-            fsLayer.getGoodgarfs.resolves(['testGarf.mp4', 'testGarf.jpg', 'garf.png'])
+            fsLayer.getGoodGarfs.resolves(['testGarf.mp4', 'testGarf.jpg', 'garf.png'])
             return request(await createApp('test_host'))
                 .get('/garf?include=jpg')
                 .expect('Content-Type', /text\/html/)
@@ -56,7 +56,7 @@ describe('randomgarf', () => {
     describe('get /garf.json', () => {
         it('should be garf', async () => {
             // @ts-ignore
-            fsLayer.getGoodgarfs.resolves(['testGarf.jpg'])
+            fsLayer.getGoodGarfs.resolves(['testGarf.jpg'])
             fsLayer.getGarfFileSize.resolves(67107)//this may change (the num)
             return request(await createApp('test_host'))
                 .get('/garf.json')
@@ -69,7 +69,7 @@ describe('randomgarf', () => {
         })
         it('should not return jpeg garfs when filter is garf', async () => {
             // @ts-ignore
-            fsLayer.getGoodgarfs.resolves(['testGarf.jpg', 'garf.png', 'testGarf.JPG'])
+            fsLayer.getGoodGarfs.resolves(['testGarf.jpg', 'garf.png', 'testGarf.JPG'])
             return request(await createApp('test_host'))
                 .get('/garf.json?filter=jpg')
                 .expect('Content-Type', /json/)
@@ -80,7 +80,7 @@ describe('randomgarf', () => {
         })
         it('should only return jpeg garfs when include is jpg', async () => {
             // @ts-ignore
-            fsLayer.getGoodgarfs.resolves(['testGarf.mp4', 'testGarf.JPG', 'garf.png'])
+            fsLayer.getGoodGarfs.resolves(['testGarf.mp4', 'testGarf.JPG', 'garf.png'])
             return request(await createApp('test_host'))
                 .get('/garf.json?include=jpg')
                 .expect('Content-Type', /json/)
@@ -93,7 +93,7 @@ describe('randomgarf', () => {
     describe('get /garfields', () => {
         it('should return a lot of garfs', async () => {
             // @ts-ignore
-            fsLayer.getGoodgarfs.resolves(['garfA', 'garfB'])
+            fsLayer.getGoodGarfs.resolves(['garfA', 'garfB'])
             return request(await createApp('test_host'))
                 .get('/garfields')
                 .expect('Content-Type', /application\/json/)
@@ -104,7 +104,7 @@ describe('randomgarf', () => {
         })
         it('should return filtered garfields', async () => {
             // @ts-ignore
-            fsLayer.getGoodgarfs.resolves(['garfA.Jpg', 'garfB.png'])
+            fsLayer.getGoodGarfs.resolves(['garfA.Jpg', 'garfB.png'])
             return request(await createApp('test_host'))
                 .get('/garfields?filter=jpg')
                 .expect('Content-Type', /application\/json/)
@@ -115,7 +115,7 @@ describe('randomgarf', () => {
         })
         it('should return included garfields', async () => {
             // @ts-ignore
-            fsLayer.getGoodgarfs.resolves(['garfA.Jpg', 'garfB.png', 'garfB.mp4', 'garfZ.jpg'])
+            fsLayer.getGoodGarfs.resolves(['garfA.Jpg', 'garfB.png', 'garfB.mp4', 'garfZ.jpg'])
             return request(await createApp('test_host'))
                 .get('/garfields?include=jpg')
                 .expect('Content-Type', /application\/json/)
