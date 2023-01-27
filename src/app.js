@@ -41,11 +41,7 @@ export const createApp = async (host) => {
     const app = express()
 
     app.engine('handlebars', exphbs({defaultLayout: false}))
-
     app.set('view engine', 'handlebars')
-
-    //app.use(ua.middleware('UA-50585312-4', {cookieName: '_ga', https: true}))
-
     app.use(cookieParser())
 
     app.use(fileUpload({
@@ -76,7 +72,7 @@ export const createApp = async (host) => {
         if (req.headers.referer && req.headers.referer.endsWith('/review')) {
             if (isAuthorized(req) !== true) {
                 req.visitor.event('/review/*', 'GET 401 Unauthorized', 'api').send()
-                return next(new garfError('no garf haters allowed :P', 401))
+                return next(new garfError('no odies allowed :P', 401))
             }
             express.static(garfFolderName.new)(req, res, next)
         } else {
