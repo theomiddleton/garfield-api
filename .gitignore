@@ -5,6 +5,7 @@ img
 secret.json
 rejects
 lib
+.vscode
 
 # Created by https://www.gitignore.io/api/node
 
