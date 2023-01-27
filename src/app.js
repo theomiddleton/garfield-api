@@ -1,4 +1,3 @@
-//import bodyParser from 'body-parser'
 import express from 'express'
 import fileUpload from 'express-fileupload'
 import cookieParser from 'cookie-parser'
@@ -6,12 +5,8 @@ import path from 'path'
 import exphbs from 'express-handlebars'
 import {List} from 'immutable'
 import {checkHash} from './hash-util'
-//import {garfFolderName, getGarfsCount, getGoodGarfs, getGarfFileSize} from './fs-layer'
-// this is a shitty fix for this ^^ line not compiling well. what u gonna do about it.
-import {garfFolderName} from './fs-layer'
-import {getGarfsCount} from './fs-layer'
-import {getGoodGarfs} from './fs-layer'
-import {getGarfFileSize} from './fs-layer'
+
+import {garfFolderName, getGarfsCount, getGoodGarfs, getGarfFileSize} from './fs-layer'
 
 import {garfError} from './garf-error'
 import {GarfCache} from './garfCache'
@@ -23,8 +18,6 @@ async function updateGarfsCount() {
 }
 
 updateGarfsCount()
-
-//const jsonParser = bodyParser.json()
 
 export const createApp = async (host) => {
     //let cache = new GarfCache(new List(await getGoodGarfs()))
@@ -65,7 +58,7 @@ export const createApp = async (host) => {
     }))
 
     app.use((req, res, next) => {
-        log(`NEW REQUEST: ${getDateTime()} EST - NYC | ${req.method} ${req.url} ${req.body ? JSON.stringify(req.body) : ''}`)
+        log(`NEW REQUEST: ${getDateTime()} GMT | ${req.method} ${req.url} ${req.body ? JSON.stringify(req.body) : ''}`)
         next()
     })
 
