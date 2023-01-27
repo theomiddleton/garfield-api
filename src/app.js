@@ -132,7 +132,7 @@ export const createApp = async (host) => {
         const Garfs = cache.random()
 
         res.render('helloworld.handlebars', {
-            [getgarfType(Garfs)]: Garfs,
+            [getGarfType(Garfs)]: Garfs,
             adopted: immortalGarfs
         })
     })
@@ -149,7 +149,7 @@ export const createApp = async (host) => {
 
     // eslint-disable-next-line no-unused-vars
     app.use(function (err, req, res, next) {
-        if (isgarfErrorType400(err)) {
+        if (isGarfErrorType400(err)) {
             return res.status(err.garfErrorType).send(err.message)
         } else {
             console.error(err.stack)
@@ -167,11 +167,11 @@ function isAuthorized(req) {
 
 // this line manages media types 
 
-function getgarfType(Garfs) {
+function getGarfType(Garfs) {
     return path.extname(Garfs) == '.mp4' || path.extname(Garfs) == '.webm' ? 'garfmp4' : 'garfimg'
 }
 
-function isgarfErrorType400(err) {
+function isGarfErrorType400(err) {
     return err.garfErrorType && err.garfErrorType >= 400 && err.garfErrorType < 500
 }
 
