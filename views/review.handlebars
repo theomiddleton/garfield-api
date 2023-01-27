@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 1em;
+            text-align: center;
+            padding: 100px;
+        }
+
+        #main-div {
+            text-align: center;
+            height: 100%;
+        }
+
+        #garf-img {
+            max-width: 80%;
+            max-height: 80%;
+            box-shadow: 1px 1px 0 0 #ffffff inset, 0 2px 3px 0 #B3B3B3;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="main-div">
+        <h1>Garfield Review</h1>
+        <h3>{{waitinggarfs}} garf{{s}} awaiting inspection</h3>
+        <div>
+            <button id="garfadopt">Adopt</button>
+            <span>---------</span>
+            <button id="garfreject">Reject</button>
+            <p id="result">
+            </p>
+        </div>
+        {{#if garfimg}}
+            <img id="garf-img" src="{{garfimg}}" /> {{/if}}
+        {{#if garfmp4}}
+            <video id="garf-img" autoplay loop muted>
+                <source src="{{garfmp4}}" type="video/mp4">
+            </video>
+        {{/if}}
+    </div>
+    <script>
+        function getParameterByName(name, url) {
+            if (!url) url = window.location.href
+            name = name.replace(/[\[\]]/g, "\\$&")
+            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                results = regex.exec(url)
+            if (!results) return null
+            if (!results[2]) return ''
+            return decodeURIComponent(results[2].replace(/\+/g, " "))
+        }
+
+        function review(action) {
+            var url = 'review?bone=' + getParameterByName('bone')
+            var xhr = new XMLHttpRequest()
+            xhr.open('POST', url, true)
+            xhr.setRequestHeader("Content-Type", "application/json")
+            xhr.onreadystatechange = function () {
+                console.log(xhr.responseText)
+                updateResultTest(xhr.responseText)
+                setTimeout(function () {location.reload()}, 1000)
+            }
+            console.log("about to send")
+            xhr.send(JSON.stringify({action, garfName: '{{garf}}'}))
+        }
+
+        function updateResultTest(newText) {
+            document.getElementById('result').innerText = newText
+        }
+
+        document.getElementById('garfadopt').addEventListener('click', function () {
+            review('adopt')
+        }, false)
+
+        document.getElementById('garfreject').addEventListener('click', function () {
+            review('reject')
+        }, false)
+    </script>
+</body>
+
+</html>

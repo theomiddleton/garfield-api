@@ -1,0 +1,62 @@
+{
+  "name": "garfield-api",
+  "version": "1.0.1",
+  "description": "heheheha",
+  "main": "randomgarf.js",
+  "scripts": {
+    "start": "concurrently \"babel src --watch --out-dir lib --copy-files\" \"nodemon -e js,hbs,handlebars ./lib/randomgarf.js\"",
+    "build": "babel src --out-dir lib --copy-files",
+    "prodstart": "pm2 start process.yml",
+    "lint": "eslint .",
+    "test": "mocha",
+    "tdd": "mocha --watch --reporter dot",
+    "clean": "rm -rf lib"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.18.2",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.15.4",
+    "express-fileupload": "^0.4.0",
+    "express-handlebars": "^3.0.0",
+    "fs-extra": "^4.0.2",
+    "handlebars": "^4.0.10",
+    "immutable": "^3.8.2",
+    "passport": "^0.4.0",
+    "universal-analytics": "^0.4.15",
+    "uuid": "^3.1.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.0.0-beta.46",
+    "@babel/core": "^7.0.0-beta.46",
+    "@babel/plugin-proposal-class-properties": "^7.0.0-beta.46",
+    "@babel/preset-env": "^7.0.0-beta.46",
+    "@babel/register": "^7.0.0-beta.46",
+    "babel-eslint": "^8.2.3",
+    "chai": "^4.1.2",
+    "chai-string": "^1.4.0",
+    "concurrently": "^3.5.0",
+    "eslint": "^4.11.0",
+    "eslint-plugin-babel": "^5.1.0",
+    "make-promises-safe": "^1.1.0",
+    "mocha": "^5.0.0",
+    "nodemon": "^1.12.1",
+    "sinon": "^4.1.2",
+    "sinon-chai": "^2.14.0",
+    "supertest": "^3.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/theomiddleton/garfield-api.git"
+  },
+  "keywords": [
+    "api",
+    "random",
+    "Garfield"
+  ],
+  "author": "David 'AdenFlorian' Valachovic",
+  "bugs": {
+    "url": "https://github.com/theomiddleton/garfield-api/issues"
+  },
+  "homepage": "https://github.com/theomiddleton/garfield-api#readme"
+}

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="initial-scale=1">
+    <meta name="description" content="Hello World, This Is Garfield">
+    <meta name="author" content="theomiddleton">
+    <title>Garfield</title>
+    <link rel="icon" href="favicon.ico">
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            height: 100vh;
+        }
+
+        #main-div {
+            text-align: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        header {
+            height: 10%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        h3 {
+            padding: 20px;
+            margin: 0;
+            font-size: 3vh;
+        }
+
+        #img-div {
+            height: 80%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        #img-div div {
+            max-height: 100%;
+        }
+
+        #garf-img {
+            max-width: 100%;
+            max-height: 80vh;
+            box-shadow: 1px 1px 0 0 #ffffff inset, 0 2px 3px 0 #B3B3B3;
+        }
+
+        footer {
+            text-align: left;
+            color: #aaa;
+            font-size: 1em;
+            height: 10%;
+            min-height: 50px;
+        }
+
+        @media screen and (max-width: 950px) {
+            footer {
+                font-size: 1.75vw;
+            }
+        }
+
+        footer table {
+            width: 100%;
+            height: 100%;
+            table-layout: fixed;
+        }
+
+        footer td {
+            vertical-align: bottom;
+            padding: 0;
+        }
+
+        footer td:nth-child(2) {
+            text-align: center
+        }
+
+        footer td:last-child {
+            text-align: right
+        }
+
+        a {
+            color: #aaa;
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: #779;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="main-div">
+        <header>
+            <h3>Hello World, This Is Garfield</h3>
+        </header>
+        <div id="img-div">
+            <div>
+                {{#if garfimg}}
+                    <img id="garf-img" src="{{garfimg}}" />
+                {{/if}}
+                {{#if garfmp4}}
+                    <video id="garf-img" autoplay loop muted>
+                        <source src="{{garfmp4}}" type="video/mp4">
+                    </video>
+                {{/if}}
+            </div>
+        </div>
+        <footer>
+            <table>
+                <tr>
+                    <td>
+                        ~{{adopted}} garfields
+                    </td>
+                    <td>
+                        {{!-- <a href="/upload">/upload</a> --}}
+                        <a href="/garf">/garf</a>
+                        <a href="/garf.json">/garf.json</a>
+                        <a href="/garfields">/garfields</a>
+                    </td>
+                    <td>
+                        <a href="https://twitter.com/thisistheom_">twitter</a>
+                        <a href="https://github.com/theomiddleton/garfield-api">github</a>
+                    </td>
+                </tr>
+            </table>
+        </footer>
+    </div>
+</body>
+
+</html>
