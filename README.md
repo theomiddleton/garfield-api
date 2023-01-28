@@ -4,6 +4,7 @@
 
 - `node@^10.1.0`
 - `yarn@^1.6.0`
+- `a collection of hundreds of garfield images and videos`
 
 ## Setup
 
@@ -32,6 +33,6 @@ i dont know why you'd even bother testing this shit but like...
 
 On the `GET /garf`, `GET /garf.json`, and `GET /garfields` endpoints, you may add a query parameter called `filter` which should have 1 or more file extensions, separated by commas. When hitting any of the above 3 endpoints with the `filter` param, that endpoint will only return dogs that do not have one of the filtered extensions. There is also an `include` query param that does the opposite of `filter`.
 
-Example: `GET localhost:8080/garf?filter=mp4,webm` will only return dogs that do not have an extension of `mp4` or `webm`.
+Example: `GET localhost:8080/garf?filter=mp4,webm` will only return garfs that do not have an extension of `mp4` or `webm`.
 
-Example: `GET random.dog/garf?include=mp4,webm` will only return dogs that do have an extension of `mp4` or `webm`.
+Example: `GET random.dog/garf?include=mp4,webm` will only return garfs that do have an extension of `mp4` or `webm`.
