@@ -5,13 +5,14 @@ console.log('process.env.NODE_ENV:', process.env.NODE_ENV)
 console.log('*****************************')
 
 // Should be run behind a reverse proxy
-const privatePort = 8080
-const host = 'https://localhost/'
+//const privatePort = 8080
+const PORT = process.env.PORT || 8080
+const host = 'https://localhost'
 
 createApp(host)
 	.then(app => {
-		app.listen(privatePort, (err) => {
+		app.listen(PORT, (err) => {
 			if (err) return console.error(err.stack)
-			console.log(`garfield vibing at ${host}`)
+			console.log(`garfield vibing at ${host}:${PORT}`)
 		})
 	})

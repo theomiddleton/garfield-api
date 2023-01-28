@@ -10,12 +10,14 @@
     "lint": "eslint .",
     "test": "mocha",
     "tdd": "mocha --watch --reporter dot",
-    "clean": "rm -rf lib"
+    "clean": "rmdir /s /q lib",
+    "clean-L": "rm -rf lib"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.2",
     "cookie-parser": "^1.4.3",
+    "dotenv": "^16.0.3",
     "express": "^4.15.4",
     "express-fileupload": "^0.4.0",
     "express-handlebars": "^3.0.0",
