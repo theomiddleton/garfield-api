@@ -1,6 +1,6 @@
 import express from 'express'
 import fileUpload from 'express-fileupload'
-import cookieParser from 'cookie-parser'
+//import cookieParser from 'cookie-parser'
 import path from 'path'
 import ua from 'universal-analytics'
 import exphbs from 'express-handlebars'
@@ -44,7 +44,7 @@ export const createApp = async (host) => {
     // WHY THE FUCK DOES THIS ONE LINE MAKE MY CODE WORK!@!
     //WHAT THE FUCK
     app.use(ua.middleware('UA-201314959-2', {cookieName: '_ga', https: true}))
-    app.use(cookieParser())
+    //app.use(cookieParser())
 
     app.use(fileUpload({
         limits: {
