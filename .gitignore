@@ -1,7 +1,7 @@
 newgarfs
 *.sh
 *.bat
-img
+#img
 secret.json
 rejects
 lib
