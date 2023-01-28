@@ -89,7 +89,7 @@ describe('randomgarf', () => {
                     expect(response.body.url).to.equal('test_host/testGarf.JPG')
                 })
         })
-    })//********************************ABOVE IS REFACTORED*********************************************************************************** */
+    })
     describe('get /garfields', () => {
         it('should return a lot of garfs', async () => {
             // @ts-ignore

@@ -8,7 +8,7 @@ import {checkHash} from './hash-util'
 
 import {garfFolderName, getGarfsCount, getGoodGarfs, getGarfFileSize} from './fs-layer'
 
-import {garfError} from './garf-error'
+import {GarfError} from './garf-error'
 import {GarfCache} from './garfCache'
 
 let immortalGarfs = 0
@@ -20,8 +20,6 @@ async function updateGarfsCount() {
 updateGarfsCount()
 
 export const createApp = async (host) => {
-    //let cache = new GarfCache(new List(await getGoodGarfs()))
-
     let cache = new GarfCache(new List(await getGoodGarfs()))
 
     setInterval(() => {
@@ -30,8 +28,8 @@ export const createApp = async (host) => {
 
     async function updateCache() {
         try {
-            const goodgarfs = await getGoodGarfs()
-            cache = new GarfCache(new List(goodgarfs))
+            const goodGarfs = await getGoodGarfs()
+            cache = new GarfCache(new List(goodGarfs))
             updateGarfsCount()
         } catch (error) {
             console.error(error.stack)
@@ -72,7 +70,7 @@ export const createApp = async (host) => {
         if (req.headers.referer && req.headers.referer.endsWith('/review')) {
             if (isAuthorized(req) !== true) {
                 req.visitor.event('/review/*', 'GET 401 Unauthorized', 'api').send()
-                return next(new garfError('no odies allowed :P', 401))
+                return next(new GarfError('no odies allowed :P', 401))
             }
             express.static(garfFolderName.new)(req, res, next)
         } else {
@@ -83,13 +81,13 @@ export const createApp = async (host) => {
     app.get('/garf', (req, res) => {
         req.visitor.event('garf', 'GET', 'api').send()
         setCORSHeaders(res)
-        res.status(200).send(getgarfsMaybeWithFilter(req).random())
+        res.status(200).send(getGarfsMaybeWithFilter(req).random())
     })
 
     app.get('/garf.json', async (req, res) => {
         req.visitor.event('garf.json', 'GET', 'api').send()
         setCORSHeaders(res)
-        const garfName = getgarfsMaybeWithFilter(req).random()
+        const garfName = getGarfsMaybeWithFilter(req).random()
         const fileSizeBytes = await getGarfFileSize(garfName)
         res.status(200).json({
             fileSizeBytes,
@@ -100,10 +98,10 @@ export const createApp = async (host) => {
     app.get('/garfields', async (req, res) => {
         req.visitor.event('garfeilds', 'GET', 'api').send()
         setCORSHeaders(res)
-        res.status(200).json(getgarfsMaybeWithFilter(req))
+        res.status(200).json(getGarfsMaybeWithFilter(req))
     })
 
-    function getgarfsMaybeWithFilter(req) {
+    function getGarfsMaybeWithFilter(req) {
         if (req.query.filter) {
             const filters = req.query.filter.split(',')
             return cache.applyFilters(filters, false)
@@ -133,6 +131,7 @@ export const createApp = async (host) => {
     })
     app.get('/sitemap.txt', (req, res, next) => {
         req.visitor.event('sitemap.txt', 'GET', 'api').send()
+        //res.send('sitemap.txt', 'GET', 'api')
         express.static('.')(req, res, next)
     })
 
