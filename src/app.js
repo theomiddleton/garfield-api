@@ -41,6 +41,7 @@ export const createApp = async (host) => {
 
     app.engine('handlebars', exphbs({defaultLayout: false}))
     app.set('view engine', 'handlebars')
+    app.set('trust proxy', true)
     // WHY THE FUCK DOES THIS ONE LINE MAKE MY CODE WORK!@!
     //WHAT THE FUCK
     app.use(ua.middleware('UA-201314959-2', {cookieName: '_ga', https: true}))
