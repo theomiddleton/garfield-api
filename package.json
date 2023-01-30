@@ -11,7 +11,8 @@
     "test": "mocha",
     "tdd": "mocha --watch --reporter dot",
     "clean": "rmdir /s /q lib",
-    "clean-L": "rm -rf lib"
+    "clean-L": "rm -rf lib",
+    "deploy" :"gcloud app deploy"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
