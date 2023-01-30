@@ -12,9 +12,12 @@
     "tdd": "mocha --watch --reporter dot",
     "clean": "rmdir /s /q lib",
     "clean-L": "rm -rf lib",
-    "deploy" :"gcloud app deploy"
+    "deploy": "gcloud app deploy",
+    "monitor": "gcloud app logs tail -s default"
   },
   "dependencies": {
+    "@google-cloud/appengine-admin": "^2.1.2",
+    "@google-cloud/shell": "^2.0.4",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.2",
     "cookie-parser": "^1.4.3",
@@ -57,7 +60,7 @@
     "random",
     "Garfield"
   ],
-  "author": "David 'AdenFlorian' Valachovic",
+  "author": "theo middleton & David 'AdenFlorian' Valachovic",
   "bugs": {
     "url": "https://github.com/theomiddleton/garfield-api/issues"
   },
