@@ -68,7 +68,7 @@ export const createApp = async (host) => {
     }
 
     // API
-    app.get('*', (req, res, next) => {
+    app.get(/^(?!.*_ah).*$/,(req,res,next)=>{
         req.visitor.event('*', 'GET', 'api').send()
         setCORSHeaders(res)
 
