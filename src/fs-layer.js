@@ -28,7 +28,7 @@ export async function rejectGarf(garfName) {
     await fs.move(rejectGarfPath, `./${garfFolderName.reject}/${garfName}`, {overwrite: true})
 }
 
-export async function adoptGarf(garfName) {
+export async function acceptGarf(garfName) {
     const rejectGarfPath = `./${garfFolderName.new}/${garfName}`
     
     if (await fs.exists(rejectGarfPath) === false) throw new GarfError('garfName no exist', 400)

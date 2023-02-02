@@ -1,4 +1,5 @@
 import express from 'express'
+import bodyParser from 'body-parser'
 import fileUpload from 'express-fileupload'
 //import cookieParser from 'cookie-parser'
 import uuidV4 from 'uuid/v4'
@@ -8,7 +9,7 @@ import exphbs from 'express-handlebars'
 import {List} from 'immutable'
 import {checkHash} from './hash-util'
 
-import {garfFolderName, getGarfsCount, getGoodGarfs, getGarfFileSize, getNewGarfs} from './fs-layer'
+import {garfFolderName, getGarfsCount, getGoodGarfs, getGarfFileSize, getNewGarfs, rejectGarf, acceptGarf} from './fs-layer'
 
 import {GarfError} from './garf-error'
 import {GarfCache} from './garfCache'
@@ -18,6 +19,8 @@ let immortalGarfs = 0
 async function updateGarfsCount() {
     immortalGarfs = await getGarfsCount()
 }
+
+const jsonParser = bodyParser.json()
 
 updateGarfsCount()
 
@@ -147,6 +150,54 @@ export const createApp = async (host) => {
         req.visitor.event('upload', 'successful upload', 'api').send()
         return res.status(200).send('Garfield uploaded successfully!')
     })
+
+    app.post('/review', jsonParser, async (req, res, next) => {
+        const {visitor, body} = req
+
+        visitor.event('review', 'POST', 'api').send()
+
+        if (isAuthorized(req) !== true) {
+            visitor.event('review', 'POST 401 Unauthorized', 'api').send()
+            return next(new GarfError('no odies allowed :P', 401))
+        }
+
+        if (!body) {
+            visitor.event('review', 'POST 400 No body', 'api').send()
+            return next(new GarfError('no body', 400))
+        }
+
+        const garfName = body.garfName
+
+        if (['reject', 'accept'].includes(body.action) === false) {
+            visitor.event('review', 'POST 400 bad action', 'api').send()
+            return next(new GarfError('no action', 400))
+        }
+
+        if (!garfName || garfName.length < 3) {
+            visitor.event('review', 'POST 400 no garfName', 'api').send()
+            return next(new GarfError('no garfName', 400))
+        }
+
+        try {
+            if (body.action === 'reject') {
+                await acceptOrReject(rejectGarf, garfName, res, 'garf rejected', visitor)
+            } else {
+                await acceptOrReject(acceptGarf, garfName, res, 'garf accepted', visitor)
+            }
+        } catch (error) {
+            return next(error)
+        }
+
+        async function acceptOrReject(func, garfName, res, message, visitor) {
+        await func(garfName)
+        updateCache()
+        visitor.event('review', message, 'api').send()
+        log(`${message}: ${garfName}`)
+        res.status(200).send(message)
+        }
+    })
+
+    
 
 
     // Pages
