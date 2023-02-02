@@ -239,8 +239,6 @@ export const createApp = async (host) => {
         })
     })
 
-
-
     // Other
     app.get('/favicon.ico', (req, res, next) => {
         req.visitor.event('favicon.ico', 'GET', 'api').send()
