@@ -1,3 +1,5 @@
 http://localhost:8080/garf
 http://localhost:8080/garf.json
-http://localhost:8080/garfeilds
+http://localhost:8080/garfields
+http://localhost:8080/review
+http://localhost:8080/upload
