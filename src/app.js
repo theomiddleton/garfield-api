@@ -197,9 +197,6 @@ export const createApp = async (host) => {
         }
     })
 
-    
-
-
     // Pages
     app.get('/', (req, res) => {
         req.visitor.event('/', 'GET', 'api').send()
@@ -210,6 +207,39 @@ export const createApp = async (host) => {
             adopted: immortalGarfs
         })
     })
+
+    app.get('/upload', async (req, res) => {
+        req.visitor.event('/upload', 'GET', 'api').send()   
+
+        const newGarfs = await getNewGarfs()
+
+        res.render('upload', {garf: newGarfs, waitingGarfs: newGarfs.length})
+    })
+    
+    app.get('/review', async (req, res) => {
+        req.visitor.event('/review', 'GET', 'api').send()
+
+        if (isAuthorized(req) !== true) {
+            req.visitor.event('/review', 'GET 401 Unauthorized', 'api').send()
+            return res.status(401).send('no odies allowed :P')
+        }
+    
+        const newGarfs = await getNewGarfs()
+
+        if (newGarfs.length === 0) return res.status(200).send('no new garfs to review')
+
+        const garf = newGarfs[0]
+
+        res.render('review', {
+            [getGarfType(garf)]: garf,
+            garf: garf,
+            waitingGarfs: newGarfs.length,
+            bone: req.query.bone,
+            s: newGarfs.length > 1 ? 's' : ''
+        })
+    })
+
+
 
     // Other
     app.get('/favicon.ico', (req, res, next) => {
