@@ -1,13 +1,14 @@
 import express from 'express'
 import fileUpload from 'express-fileupload'
 //import cookieParser from 'cookie-parser'
+import uuidV4 from 'uuid/v4'
 import path from 'path'
 import ua from 'universal-analytics'
 import exphbs from 'express-handlebars'
 import {List} from 'immutable'
 import {checkHash} from './hash-util'
 
-import {garfFolderName, getGarfsCount, getGoodGarfs, getGarfFileSize} from './fs-layer'
+import {garfFolderName, getGarfsCount, getGoodGarfs, getGarfFileSize, getNewGarfs} from './fs-layer'
 
 import {GarfError} from './garf-error'
 import {GarfCache} from './garfCache'
@@ -117,6 +118,36 @@ export const createApp = async (host) => {
             return cache
         }
     }
+
+    app.post('/upload', async (req, res) => {
+        req.visitor.event('upload', 'POST', 'api').send()
+
+        if(!req.files) {
+            req.visitor.event('upload', 'POST 400 No files were uploaded', 'api').send()
+            return res.status(400).send('No files were uploaded.')
+        }
+
+        const newGarfs = await getNewGarfs()
+
+        if (newGarfs.length >= 250) {
+            req.visitor.event('upload', 'Too many Garfields :(', 'api').send()
+            return res.status(200).send('Too many Garfields in queue, please try again later.')
+        }
+
+        const uploadedFile = req.files.upload_file
+        const acceptedMineTypes = ['image/jpeg', 'image/png', 'image/gif', 'video/mp4', 'video/webm']
+
+        if (!acceptedMineTypes.includes(uploadedFile.mimetype)) {
+            req.visitor.event('upload', 'POST 400 Wrong file type', 'api').send()
+            return res.status(400).send('please upload a jpeg, png, gif, mp4, or webm garfields')
+        }
+
+        uploadedFile.mv('./newgarfs' + uuidV4() + path.extname(uploadedFile.name))
+
+        req.visitor.event('upload', 'successful upload', 'api').send()
+        return res.status(200).send('Garfield uploaded successfully!')
+    })
+
 
     // Pages
     app.get('/', (req, res) => {

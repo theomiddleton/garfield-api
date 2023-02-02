@@ -6,11 +6,11 @@ export const garfFolderName = {
     approved: 'img',
     reject: 'rejects',
 }
-//
-//fs.ensureDirSync(garfFolderName.new)
-//fs.ensureDirSync(garfFolderName.approved)
-//fs.ensureDirSync(garfFolderName.reject)
-//
+
+fs.ensureDirSync(garfFolderName.new)
+fs.ensureDirSync(garfFolderName.approved)
+fs.ensureDirSync(garfFolderName.reject)
+
 export function getGarfsCount() {
     return fs.readdir(garfFolderName.approved)
         .then(({length}) => length)
