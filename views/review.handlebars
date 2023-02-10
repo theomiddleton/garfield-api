@@ -28,7 +28,7 @@
         <h1>Garfield Review</h1>
         <h3>{{waitinggarfs}} garf{{s}} awaiting inspection</h3>
         <div>
-            <button id="garfadopt">Adopt</button>
+            <button id="garfadopt">Accept</button>
             <span>---------</span>
             <button id="garfreject">Reject</button>
             <p id="result">
@@ -72,7 +72,7 @@
         }
 
         document.getElementById('garfadopt').addEventListener('click', function () {
-            review('adopt')
+            review('accept')
         }, false)
 
         document.getElementById('garfreject').addEventListener('click', function () {

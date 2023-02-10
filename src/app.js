@@ -1,18 +1,17 @@
-import express from 'express'
 import bodyParser from 'body-parser'
+import express from 'express'
 import fileUpload from 'express-fileupload'
-//import cookieParser from 'cookie-parser'
-import uuidV4 from 'uuid/v4'
+import cookieParser from 'cookie-parser'
 import path from 'path'
 import ua from 'universal-analytics'
+import uuidV4 from 'uuid/v4'
 import exphbs from 'express-handlebars'
 import {List} from 'immutable'
-import {checkHash} from './hash-util'
+//import { checkHash } from './hash-util'
+import { garfFolderName, getGarfsCount, getNewGarfs, getGoodGarfs, rejectGarf, acceptGarf, getGarfFileSize } from './fs-layer'
 
-import {garfFolderName, getGarfsCount, getGoodGarfs, getGarfFileSize, getNewGarfs, rejectGarf, acceptGarf} from './fs-layer'
-
-import {GarfError} from './garf-error'
-import {GarfCache} from './garfCache'
+import { GarfError } from './garf-error'
+import { GarfCache } from './garfCache'
 
 let immortalGarfs = 0
 
@@ -20,9 +19,9 @@ async function updateGarfsCount() {
     immortalGarfs = await getGarfsCount()
 }
 
-const jsonParser = bodyParser.json()
-
 updateGarfsCount()
+
+const jsonParser = bodyParser.json()
 
 export const createApp = async (host) => {
     let cache = new GarfCache(new List(await getGoodGarfs()))
@@ -33,8 +32,8 @@ export const createApp = async (host) => {
 
     async function updateCache() {
         try {
-            const goodGarfs = await getGoodGarfs()
-            cache = new GarfCache(new List(goodGarfs))
+            const newGarfs = await getGoodGarfs()
+            cache = new GarfCache(new List(newGarfs))
             updateGarfsCount()
         } catch (error) {
             console.error(error.stack)
@@ -44,12 +43,12 @@ export const createApp = async (host) => {
     const app = express()
 
     app.engine('handlebars', exphbs({defaultLayout: false}))
+
     app.set('view engine', 'handlebars')
-    app.set('trust proxy', true)
-    // WHY THE FUCK DOES THIS ONE LINE MAKE MY CODE WORK!@!
-    //WHAT THE FUCK
-    app.use(ua.middleware('UA-201314959-2', {cookieName: '_ga', https: true}))
-    //app.use(cookieParser())
+
+    app.use(ua.middleware('UA-50585312-4', {cookieName: '_ga', https: true}))
+
+    app.use(cookieParser())
 
     app.use(fileUpload({
         limits: {
@@ -61,7 +60,7 @@ export const createApp = async (host) => {
     }))
 
     app.use((req, res, next) => {
-        log(`NEW REQUEST: ${getDateTime()} GMT | ${req.method} ${req.url} ${req.body ? JSON.stringify(req.body) : ''}`)
+        log(`NEW REQUEST: ${getDateTime()}  ${req.method} ${req.url} ${req.body ? JSON.stringify(req.body) : ''}`)
         next()
     })
 
@@ -71,30 +70,30 @@ export const createApp = async (host) => {
         res.header('Access-Control-Allow-Methods', 'GET')
     }
 
-    // API
-    app.get(/^(?!.*_ah).*$/,(req,res,next)=>{
-        req.visitor.event('*', 'GET', 'api').send()
+    //API
+    app.get('*', (req, res, next) => {
+        req.visitor.event('*', 'GET', 'api',).send()
         setCORSHeaders(res)
 
         if (req.headers.referer && req.headers.referer.endsWith('/review')) {
-            if (isAuthorized(req) !== true) {
-                req.visitor.event('/review/*', 'GET 401 Unauthorized', 'api').send()
-                return next(new GarfError('no odies allowed :P', 401))
-            }
-            express.static(garfFolderName.new)(req, res, next)
+            //if (isAuthorized(req) !== true) {
+            //    req.visitor.event('/review/*', 'GET 401 Unauthorized', 'api').send()
+            //    return next(new GarfError('Unauthorized', 401))
+            //}
+        express.static(garfFolderName.new)(req, res, next)
         } else {
             express.static(garfFolderName.approved)(req, res, next)
         }
     })
 
     app.get('/garf', (req, res) => {
-        req.visitor.event('garf', 'GET', 'api').send()
+        req.visitor.event('/garf', 'GET', 'api').send()
         setCORSHeaders(res)
         res.status(200).send(getGarfsMaybeWithFilter(req).random())
     })
 
     app.get('/garf.json', async (req, res) => {
-        req.visitor.event('garf.json', 'GET', 'api').send()
+        req.visitor.event('/garf.json', 'GET', 'api').send()
         setCORSHeaders(res)
         const garfName = getGarfsMaybeWithFilter(req).random()
         const fileSizeBytes = await getGarfFileSize(garfName)
@@ -104,8 +103,8 @@ export const createApp = async (host) => {
         })
     })
 
-    app.get('/garfields', async (req, res) => {
-        req.visitor.event('garfeilds', 'GET', 'api').send()
+    app.get('/Garfields', async (req, res) => {
+        req.visitor.event('Garfields', 'GET', 'api').send()
         setCORSHeaders(res)
         res.status(200).json(getGarfsMaybeWithFilter(req))
     })
@@ -113,140 +112,141 @@ export const createApp = async (host) => {
     function getGarfsMaybeWithFilter(req) {
         if (req.query.filter) {
             const filters = req.query.filter.split(',')
-            return cache.applyFilters(filters, false)
+            return cache.applyFilters(filters, true)
         } else if (req.query.include) {
-            const includes = req.query.include.split(',')
-            return cache.applyFilters(includes, true)
+            const filters = req.query.include.split(',')
+            return cache.applyFilters(filters, true)
         } else {
             return cache
         }
     }
 
-    app.post('/upload', async (req, res) => {
-        req.visitor.event('upload', 'POST', 'api').send()
+    app.post('upload', async (req, res) => {
+        req.visitor.event('/upload', 'POST', 'api').send()
 
-        if(!req.files) {
-            req.visitor.event('upload', 'POST 400 No files were uploaded', 'api').send()
+        if (!req.files) {
+            req.visitor.event('/upload', 'POST 400 No files were uploaded', 'api').send()
             return res.status(400).send('No files were uploaded.')
         }
 
         const newGarfs = await getNewGarfs()
-
+        
+        // Limit the number of new garfs to 250
         if (newGarfs.length >= 250) {
-            req.visitor.event('upload', 'Too many Garfields :(', 'api').send()
-            return res.status(200).send('Too many Garfields in queue, please try again later.')
+            req.visitor.event('/upload', 'POST 429 Too many new garfs', 'api').send()
+            return res.status(429).send('Too many new garfs, please try again later.')
         }
 
         const uploadedFile = req.files.upload_file
-        const acceptedMineTypes = ['image/jpeg', 'image/png', 'image/gif', 'video/mp4', 'video/webm']
 
-        if (!acceptedMineTypes.includes(uploadedFile.mimetype)) {
-            req.visitor.event('upload', 'POST 400 Wrong file type', 'api').send()
-            return res.status(400).send('please upload a jpeg, png, gif, mp4, or webm garfields')
+        const acceptedMimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'video/mp4', 'video/webm']
+
+        if (acceptedMimeTypes.indexOf(uploadedFile.mimetype) === -1) {
+            req.visitor.event('/upload', 'POST 415 Unsupported Media Type', 'api').send()
+            return res.status(415).send('Unsupported Media Type, please upload a JPEG, PNG, GIF, MP4 or WEBM file.')
         }
 
-        uploadedFile.mv('./newgarfs' + uuidV4() + path.extname(uploadedFile.name))
+        uploadedFile.mv('./newgarfs/' + uuidV4() + path.extname(uploadedFile.name))
 
         req.visitor.event('upload', 'successful upload', 'api').send()
-        return res.status(200).send('Garfield uploaded successfully!')
+        return res.status(200).send('File uploaded!')
     })
 
     app.post('/review', jsonParser, async (req, res, next) => {
         const {visitor, body} = req
 
-        visitor.event('review', 'POST', 'api').send()
+        visitor.event('/review', 'POST', 'api').send()
 
-        if (isAuthorized(req) !== true) {
-            visitor.event('review', 'POST 401 Unauthorized', 'api').send()
-            return next(new GarfError('no odies allowed :P', 401))
-        }
+        //if (isAuthorized(req) !== true) {
+        //    visitor.event('/review', 'POST 401 Unauthorized', 'api').send()
+        //    return next(new GarfError('Unauthorized', 401))
+        //}
 
         if (!body) {
-            visitor.event('review', 'POST 400 No body', 'api').send()
-            return next(new GarfError('no body', 400))
+            visitor.event('/review', 'POST 400 No body', 'api').send()
+            return res.status(400).send('No body')
         }
 
         const garfName = body.garfName
 
         if (['reject', 'accept'].includes(body.action) === false) {
-            visitor.event('review', 'POST 400 bad action', 'api').send()
-            return next(new GarfError('no action', 400))
+            visitor.event('review', 'POST 400 Invalid action', 'api').send()
+            return next(new GarfError('Invalid action', 400))
         }
 
         if (!garfName || garfName.length < 3) {
-            visitor.event('review', 'POST 400 no garfName', 'api').send()
-            return next(new GarfError('no garfName', 400))
+            visitor.event('review', 'POST 400 Invalid garfName', 'api').send()
+            return next(new GarfError('Invalid garfName', 400))
         }
 
         try {
             if (body.action === 'reject') {
-                await acceptOrReject(rejectGarf, garfName, res, 'garf rejected', visitor)
+                await acceptOrRejectGarf(rejectGarf, garfName, res, 'garf rejected', visitor)
             } else {
-                await acceptOrReject(acceptGarf, garfName, res, 'garf accepted', visitor)
+                await acceptOrRejectGarf(acceptGarf, garfName, res, 'garf accepted', visitor)
             }
         } catch (error) {
             return next(error)
         }
 
-        async function acceptOrReject(func, garfName, res, message, visitor) {
-        await func(garfName)
-        updateCache()
-        visitor.event('review', message, 'api').send()
-        log(`${message}: ${garfName}`)
-        res.status(200).send(message)
+        async function acceptOrRejectGarf(fn, garfName, res, message, visitor) {
+            await fn(garfName)
+            updateCache()
+            visitor.event('review', message, 'api').send()
+            log(`Garf ${message}: ${garfName}`)
+            res.status(200).send(message)
         }
     })
 
-    // Pages
+    //Pages
     app.get('/', (req, res) => {
-        req.visitor.event('/', 'GET', 'api').send()
-        const Garfs = cache.random()
+        req.visitor.event('/', 'GET', 'page').send()
+        const garf = cache.random()
 
         res.render('helloworld.handlebars', {
-            [getGarfType(Garfs)]: Garfs,
+            [getGarfType(garf)]: garf,
             adopted: immortalGarfs
         })
     })
 
     app.get('/upload', async (req, res) => {
-        req.visitor.event('/upload', 'GET', 'api').send()   
+        req.visitor.event('/upload', 'GET', 'page').send()
 
         const newGarfs = await getNewGarfs()
 
-        res.render('upload', {garf: newGarfs, waitingGarfs: newGarfs.length})
+        res.render('upload', {garf : newGarfs, waitinggarfs: newGarfs.length})
     })
-    
-    app.get('/review', async (req, res) => {
-        req.visitor.event('/review', 'GET', 'api').send()
 
-        if (isAuthorized(req) !== true) {
-            req.visitor.event('/review', 'GET 401 Unauthorized', 'api').send()
-            return res.status(401).send('no odies allowed :P')
-        }
-    
+    app.get('/review', async (req, res) => {
+        req.visitor.event('/review', 'GET', 'page').send()
+
+        //if (isAuthorized(req) !== true) {
+        //    req.visitor.event('review', 'GET 401 Unauthorized', 'page').send()
+        //    return res.sendStatus(401)
+        //}
+
         const newGarfs = await getNewGarfs()
 
-        if (newGarfs.length === 0) return res.status(200).send('no new garfs to review')
+        if (newGarfs.length === 0) return res.status(200).send('No new garfs to review')
 
         const garf = newGarfs[0]
 
         res.render('review', {
             [getGarfType(garf)]: garf,
             garf: garf,
-            waitingGarfs: newGarfs.length,
             bone: req.query.bone,
-            s: newGarfs.length > 1 ? 's' : ''
+            waitinggarfs: newGarfs.length,
+            s: newGarfs.length === 1 ? 's' : ''
         })
     })
 
-    // Other
+    //other
     app.get('/favicon.ico', (req, res, next) => {
-        req.visitor.event('favicon.ico', 'GET', 'api').send()
+        req.visitor.event('/favicon.ico', 'GET', 'page').send()
         express.static('.')(req, res, next)
     })
     app.get('/sitemap.txt', (req, res, next) => {
-        req.visitor.event('sitemap.txt', 'GET', 'api').send()
-        //res.send('sitemap.txt', 'GET', 'api')
+        req.visitor.event('/sitemap.txt', 'GET', 'page').send()
         express.static('.')(req, res, next)
     })
 
@@ -256,22 +256,20 @@ export const createApp = async (host) => {
             return res.status(err.garfErrorType).send(err.message)
         } else {
             console.error(err.stack)
-            return res.status(500).send('something broke')
+            return res.status(500).send('Something broke!')
         }
     })
 
     return app
 }
 
-function isAuthorized(req) {
-    if (!req.cookies.bone) return false
-    return checkHash(Buffer.from(req.cookies.bone, 'base64').toString('ascii'))
-}
+//function isAuthorized(req) {
+//    if (!req.cookies.bone) return false
+//    return checkHash(Buffer.from(req.cookies.bone, 'base64').toString('acii'))
+//}
 
-// this line manages media types 
-
-function getGarfType(Garfs) {
-    return path.extname(Garfs) == '.mp4' || path.extname(Garfs) == '.webm' ? 'garfmp4' : 'garfimg'
+function getGarfType(garf) {
+    return path.extname(garf) == '.mp4' || path.extname(garf) == '.webm' ? 'garfmp4' : 'garfimg'
 }
 
 function isGarfErrorType400(err) {
@@ -302,6 +300,6 @@ function getDateTime() {
 }
 
 function log(message) {
-    if (process.env.NODE_ENV === 'test') return
+    if (process.env.NODE_ENV !== 'production') return
     console.log(message)
 }

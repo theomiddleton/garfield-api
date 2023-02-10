@@ -29,11 +29,11 @@ export async function rejectGarf(garfName) {
 }
 
 export async function acceptGarf(garfName) {
-    const rejectGarfPath = `./${garfFolderName.new}/${garfName}`
+    const acceptGarfPath = `./${garfFolderName.new}/${garfName}`
     
-    if (await fs.exists(rejectGarfPath) === false) throw new GarfError('garfName no exist', 400)
+    if (await fs.exists(acceptGarfPath) === false) throw new GarfError('garfName no exist', 400)
 
-    await fs.move(rejectGarfPath, `./${garfFolderName.approved}/${garfName}`, {overwrite: true})
+    await fs.move(acceptGarfPath, `./${garfFolderName.approved}/${garfName}`, {overwrite: true})
 }
 
 export async function getGarfFileSize(garfName) {
