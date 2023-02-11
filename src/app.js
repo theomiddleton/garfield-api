@@ -9,24 +9,27 @@ import exphbs from 'express-handlebars'
 import {List} from 'immutable'
 //import { checkHash } from './hash-util'
 import { garfFolderName, getGarfsCount, getNewGarfs, getGoodGarfs, rejectGarf, acceptGarf, getGarfFileSize } from './fs-layer'
-
 import { GarfError } from './garf-error'
 import { GarfCache } from './garfCache'
+
 import {Storage} from '@google-cloud/storage'
 
 const bucketName = 'garfield-api-img'
-
 const filePath = './img/garfield.jpg'
-
 const destFileName = 'garfield.jpg'
-
 const storage = new Storage()
+
+async function createBucket() {
+    await storage.createBucket(bucketName)
+    console.log(`Bucket ${bucketName} created.`)
+}
+
+createBucket().catch(console.error)
 
 async function uploadFile() {
     const options = {
         destination: destFileName
     }
-
     await storage.bucket(bucketName).upload(filePath, options)
     console.log(`${filePath} uploaded to ${bucketName}.`)
 }

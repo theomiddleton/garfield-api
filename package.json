@@ -18,6 +18,7 @@
   "dependencies": {
     "@google-cloud/appengine-admin": "^2.1.2",
     "@google-cloud/shell": "^2.0.4",
+    "@google-cloud/storage": "^6.9.2",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.2",
     "cookie-parser": "^1.4.3",
