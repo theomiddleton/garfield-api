@@ -15,16 +15,20 @@ import { GarfCache } from './garfCache'
 import {Storage} from '@google-cloud/storage'
 
 const bucketName = 'garfield-api-img'
-const filePath = './img/garfield.jpg'
+const filePath = './upload/garfield.jpg'
 const destFileName = 'garfield.jpg'
-const storage = new Storage()
+const storage = new Storage({
+    projectId: 'garfield-api',
+    keyFilename: './garfield-api-5c82dcdadf3d.json'
 
-async function createBucket() {
-    await storage.createBucket(bucketName)
-    console.log(`Bucket ${bucketName} created.`)
-}
+})
 
-createBucket().catch(console.error)
+//async function createBucket() {
+//    await storage.createBucket(bucketName)
+//    console.log(`Bucket ${bucketName} created.`)
+//}
+
+//createBucket().catch(console.error)
 
 async function uploadFile() {
     const options = {
