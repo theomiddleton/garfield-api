@@ -54,7 +54,7 @@ export const createApp = async (host) => {
         limits: {
             fileSize: 50 * 1024 * 1024,
             fields: 100,
-            files: 1,
+            files: 10,
             parts: 101
         },
     }))
@@ -121,11 +121,11 @@ export const createApp = async (host) => {
         }
     }
 
-    app.post('upload', async (req, res) => {
-        req.visitor.event('/upload', 'POST', 'api').send()
+    app.post('/upload', async (req, res) => {
+        req.visitor.event('upload', 'POST', 'api').send()
 
         if (!req.files) {
-            req.visitor.event('/upload', 'POST 400 No files were uploaded', 'api').send()
+            req.visitor.event('upload', 'POST 400 No files were uploaded', 'api').send()
             return res.status(400).send('No files were uploaded.')
         }
 
@@ -133,7 +133,7 @@ export const createApp = async (host) => {
         
         // Limit the number of new garfs to 250
         if (newGarfs.length >= 250) {
-            req.visitor.event('/upload', 'POST 429 Too many new garfs', 'api').send()
+            req.visitor.event('upload', 'POST 429 Too many new garfs', 'api').send()
             return res.status(429).send('Too many new garfs, please try again later.')
         }
 
@@ -142,7 +142,7 @@ export const createApp = async (host) => {
         const acceptedMimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'video/mp4', 'video/webm']
 
         if (acceptedMimeTypes.indexOf(uploadedFile.mimetype) === -1) {
-            req.visitor.event('/upload', 'POST 415 Unsupported Media Type', 'api').send()
+            req.visitor.event('upload', 'POST 415 Unsupported Media Type', 'api').send()
             return res.status(415).send('Unsupported Media Type, please upload a JPEG, PNG, GIF, MP4 or WEBM file.')
         }
 
