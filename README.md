@@ -35,4 +35,4 @@ On the `GET /garf`, `GET /garf.json`, and `GET /garfields` endpoints, you may ad
 
 Example: `GET localhost:8080/garf?filter=mp4,webm` will only return garfs that do not have an extension of `mp4` or `webm`.
 
-Example: `GET random.dog/garf?include=mp4,webm` will only return garfs that do have an extension of `mp4` or `webm`.
+Example: `GET localhost:8080/garf?include=mp4,webm` will only return garfs that do have an extension of `mp4` or `webm`.
