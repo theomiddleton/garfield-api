@@ -12,6 +12,27 @@ import { garfFolderName, getGarfsCount, getNewGarfs, getGoodGarfs, rejectGarf, a
 
 import { GarfError } from './garf-error'
 import { GarfCache } from './garfCache'
+import {Storage} from '@google-cloud/storage'
+
+const bucketName = 'garfield-api-img'
+
+const filePath = './img/garfield.jpg'
+
+const destFileName = 'garfield.jpg'
+
+const storage = new Storage()
+
+async function uploadFile() {
+    const options = {
+        destination: destFileName
+    }
+
+    await storage.bucket(bucketName).upload(filePath, options)
+    console.log(`${filePath} uploaded to ${bucketName}.`)
+}
+
+uploadFile().catch(console.error)
+
 
 let immortalGarfs = 0
 
@@ -275,6 +296,8 @@ function getGarfType(garf) {
 function isGarfErrorType400(err) {
     return err.garfErrorType && err.garfErrorType >= 400 && err.garfErrorType < 500
 }
+
+
 
 function getDateTime() {
     const date = new Date()
