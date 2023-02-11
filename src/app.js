@@ -54,7 +54,7 @@ export const createApp = async (host) => {
         limits: {
             fileSize: 50 * 1024 * 1024,
             fields: 100,
-            files: 10,
+            files: 1,
             parts: 101
         },
     }))
